@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Form Pesan</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 640px; margin: 2rem auto; padding: 1rem; }
+    label { display:block; margin-top:0.6rem; font-weight:600; }
+    input, textarea { width:100%; padding:0.5rem; box-sizing:border-box; margin-top:0.25rem; }
+    button { margin-top:0.6rem; padding:0.5rem 1rem; }
+    #resp { white-space:pre-wrap; background:#f7f7f7; padding:0.6rem; border-radius:6px; margin-top:0.8rem; }
+    .meta { font-size:0.9rem; color:#444; margin-bottom:0.8rem; }
+  </style>
+</head>
+<body>
+  <h2>Form Pesan</h2>
+
+  <form id="form">
+    <label for="nama">Nama</label>
+    <input id="nama" name="nama" required autocomplete="off" />
+
+    <label for="pesan">Pesan</label>
+    <textarea id="pesan" name="pesan" rows="5" required></textarea>
+
+    <button type="submit">Kirim</button>
+  </form>
+
+  <h3>Response</h3>
+  <div id="resp">Belum ada response.</div>
+
+  <script>
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzvJkB11w4sM-8Bxgyo1HaFmr4mpCuAfHDJZbUd17hhqwSWIR0wImILE8g9eYriKEbL/exec';
+    const form = document.getElementById('form');
+    const resp = document.getElementById('resp');
+    const revealBtn = document.getElementById('reveal');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      resp.textContent = 'Mengirim...';
+      try {
+        const fd = new FormData(form);
+        const res = await fetch(WEBAPP_URL, { method: 'POST', body: fd });
+        const txt = await res.text();
+        resp.textContent = `HTTP ${res.status} ${res.statusText}\n\n${txt}`;
+        form.reset();
+      } catch (err) {
+        resp.textContent = 'Fetch error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
